@@ -1,0 +1,40 @@
+Implement a Request-Coalescing Cache in Go
+
+You have a slow service that takes about 400 ms to return a value for a key.
+
+To avoid calling it again and again, you store the value in an in-memory cache for a short time.
+
+The problem happens when the cached value expires.
+
+Suppose 200 requests ask for the same key at the same time. Without proper handling, all 200 requests may call the slow service, even though they all need the same value.
+
+Implement the Get(key) function so that:
+
+1. If the value is present in the cache and is not expired, return it immediately.
+
+2. If the value is missing or expired, only one goroutine should call the slow service.
+
+3. Other goroutines asking for the same key should wait and use the result of that one call.
+
+4. Different keys should not block each other.
+
+Example:
+
+- 200 requests for key "a"
+- 50 requests for key "b"
+
+There should be only 2 upstream calls:
+
+- One call for key "a"
+- One call for key "b"
+
+Both upstream calls should run at the same time, so the total execution time should be around 400 ms, not 800 ms.
+
+Assume the upstream service always succeeds.
+
+Ignore cache eviction for now. Focus only on:
+
+- TTL cache handling
+- Concurrent requests
+- Preventing duplicate upstream calls for the same key
+- Allowing different keys to fetch independently
